@@ -119,11 +119,6 @@ export const AreaHighlight = ({
         }}
         key={key}
         bounds={bounds}
-        // Prevevent any event clicks as clicking is already used for movement
-        onClick={(event: Event) => {
-          event.stopPropagation();
-          event.preventDefault();
-        }}
         style={{ ...style, opacity: isSelectionInProgress ? "0.3" : "1" }}
       />
     </div>
