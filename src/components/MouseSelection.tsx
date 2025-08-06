@@ -142,7 +142,16 @@ export const MouseSelection = ({
     const container = asElement(rootRef.current.parentElement);
 
     const handleMouseUp = (event: MouseEvent) => {
-      if (!start || !end || !startTargetRef.current) return;
+      if (!start || !startTargetRef.current) {
+        return;
+      }
+
+      // If there's no end point, it means we clicked and released in the same spot
+      // Reset the selection to avoid getting "stuck"
+      if (!end) {
+        reset();
+        return;
+      }
 
       const boundingRect = getBoundingRect(start, end);
 
