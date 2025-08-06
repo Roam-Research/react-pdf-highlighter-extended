@@ -193,7 +193,8 @@ export const MouseSelection = ({
       const shouldStart = (event: MouseEvent) =>
         enableAreaSelection(event) &&
         isHTMLElement(event.target) &&
-        Boolean(asElement(event.target).closest(".page"));
+        Boolean(asElement(event.target).closest(".page")) &&
+        !asElement(event.target).closest(".react-draggable");
 
       // If the user clicks anywhere outside a tip, reset the selection
       const shouldReset = (event: MouseEvent) =>
