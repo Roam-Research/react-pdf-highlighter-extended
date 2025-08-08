@@ -43,7 +43,7 @@
   },
   "dependencies": {
     "lodash.debounce": "^4.0.8",
-    "pdfjs-dist": "^4.8.69",
+    "pdfjs-dist": "^5.4.54",
     "react-rnd": "^10.4.13"
   },
   "repository": {
