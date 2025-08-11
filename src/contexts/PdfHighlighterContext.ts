@@ -81,11 +81,6 @@ export type PdfHighlighterUtils = {
    * the tip is visible above/below its highlight.
    */
   updateTipPosition(): void;
-
-  /**
-   * Clear the current text selection and reset related internal state.
-   */
-  clearTextSelection(): void;
 };
 
 export const PdfHighlighterContext = createContext<

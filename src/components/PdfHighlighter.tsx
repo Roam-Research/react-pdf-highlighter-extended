@@ -557,7 +557,6 @@ export const PdfHighlighter = ({
     getTip: () => tip,
     setTip,
     updateTipPosition: updateTipPositionRef.current,
-    clearTextSelection,
   };
 
   utilsRef(pdfHighlighterUtils);
@@ -619,7 +618,6 @@ export const PdfHighlighter = ({
                   onCreateGhostHighlight &&
                     onCreateGhostHighlight(newGhostHighlight);
                   resetSelection();
-                  clearTextSelection();
                   renderHighlightLayers();
                   return newGhostHighlight;
                 },
