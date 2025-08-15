@@ -1,4 +1,4 @@
-import React, { CSSProperties, MouseEvent, useEffect, useState } from "react";
+import React, { CSSProperties, MouseEvent } from "react";
 
 import "../style/TextHighlight.css";
 
@@ -89,9 +89,9 @@ export const TextHighlight = ({
             key={index}
             style={{
               ...rect,
-              ...style,
               pointerEvents: isSelectionInProgress ? "none" : "auto",
               opacity: isSelectionInProgress ? "0.3" : "1",
+              ...style,
             }}
             className={`TextHighlight__part`}
           />

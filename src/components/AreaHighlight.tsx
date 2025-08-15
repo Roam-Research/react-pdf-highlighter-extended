@@ -119,7 +119,10 @@ export const AreaHighlight = ({
         }}
         key={key}
         bounds={bounds}
-        style={{ ...style, opacity: isSelectionInProgress ? "0.3" : "1" }}
+        style={{
+          opacity: isSelectionInProgress ? "0.3" : "1",
+          ...style
+        }}
       />
     </div>
   );
