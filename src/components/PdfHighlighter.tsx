@@ -21,6 +21,7 @@ import { scaledToViewport, viewportPositionToScaled } from "../lib/coordinates";
 import getBoundingRect from "../lib/get-bounding-rect";
 import getClientRects from "../lib/get-client-rects";
 import groupHighlightsByPage from "../lib/group-highlights-by-page";
+import { createHighlightScreenshot } from "../lib/screenshot";
 import {
   asElement,
   findOrCreateContainerLayer,
@@ -565,6 +566,7 @@ export const PdfHighlighter = ({
     getTip: () => tip,
     setTip,
     updateTipPosition: updateTipPositionRef.current,
+    screenshotHighlight: viewerRef.current ? createHighlightScreenshot(viewerRef.current) : () => "",
   };
 
   utilsRef(pdfHighlighterUtils);

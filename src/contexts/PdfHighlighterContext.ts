@@ -81,6 +81,14 @@ export type PdfHighlighterUtils = {
    * the tip is visible above/below its highlight.
    */
   updateTipPosition(): void;
+
+  /**
+   * Capture a PNG data url screenshot of a highlight's bounding rectangle.
+   *
+   * @param highlight - A highlight or ghost highlight to screenshot.
+   * @returns - PNG data url. See https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URLs
+   */
+  screenshotHighlight(highlight: Highlight | GhostHighlight): string;
 };
 
 export const PdfHighlighterContext = createContext<
