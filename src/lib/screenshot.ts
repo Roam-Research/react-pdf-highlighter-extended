@@ -45,24 +45,23 @@ const screenshot = (position: LTWH, pageNumber: number, viewer: PDFViewer) => {
 };
 
 /**
- * Creates a screenshot function that can work with highlights using closure over the viewer.
+ * Takes a screenshot of a highlight using the provided PDF viewer.
  *
  * @param viewer - The PDF viewer instance to use for screenshots
- * @returns - A function that takes a highlight and returns a PNG data URL
+ * @param highlight - The highlight or ghost highlight to screenshot
+ * @returns - PNG data URL
  */
-export const createHighlightScreenshot = (viewer: PDFViewer) => {
-  return (highlight: Highlight | GhostHighlight): string => {
-    const pageNumber = highlight.position.boundingRect.pageNumber;
+export const screenshotHighlight = (viewer: PDFViewer, highlight: Highlight | GhostHighlight): string => {
+  const pageNumber = highlight.position.boundingRect.pageNumber;
 
-    // Convert scaled position to viewport position
-    const viewportPosition = scaledPositionToViewport(highlight.position, viewer);
+  // Convert scaled position to viewport position
+  const viewportPosition = scaledPositionToViewport(highlight.position, viewer);
 
-    // Extract LTWH from the boundingRect (remove pageNumber for screenshot function)
-    const { left, top, width, height } = viewportPosition.boundingRect;
-    const position: LTWH = { left, top, width, height };
+  // Extract LTWH from the boundingRect (remove pageNumber for screenshot function)
+  const { left, top, width, height } = viewportPosition.boundingRect;
+  const position: LTWH = { left, top, width, height };
 
-    return screenshot(position, pageNumber, viewer);
-  };
+  return screenshot(position, pageNumber, viewer);
 };
 
 export default screenshot;
