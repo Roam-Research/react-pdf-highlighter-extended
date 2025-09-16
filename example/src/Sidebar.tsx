@@ -72,6 +72,10 @@ const Sidebar = ({
                       src={highlight.content.image}
                       alt={"Screenshot"}
                       className="highlight__image"
+                      style={{
+                        width: `${highlight.position.boundingRect.x2 - highlight.position.boundingRect.x1}px`,
+                        height: `${highlight.position.boundingRect.y2 - highlight.position.boundingRect.y1}px`
+                      }}
                     />
                   </div>
                 )}

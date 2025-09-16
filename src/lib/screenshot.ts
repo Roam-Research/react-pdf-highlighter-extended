@@ -14,16 +14,18 @@ const getAreaAsPng = (canvas: HTMLCanvasElement, position: LTWH): string => {
     return "";
   }
 
-  newCanvas.width = width;
-  newCanvas.height = height;
+  const dpr: number = window.devicePixelRatio;
 
-  const newCanvasContext = newCanvas.getContext("2d");
+  newCanvas.width = width * dpr;
+  newCanvas.height = height * dpr;
+
+  const newCanvasContext = newCanvas.getContext("2d", { alpha: false });
 
   if (!newCanvasContext || !canvas) {
     return "";
   }
 
-  const dpr: number = window.devicePixelRatio;
+  newCanvasContext.imageSmoothingEnabled = false;
 
   newCanvasContext.drawImage(
     canvas,
@@ -33,8 +35,8 @@ const getAreaAsPng = (canvas: HTMLCanvasElement, position: LTWH): string => {
     height * dpr,
     0,
     0,
-    width,
-    height,
+    width * dpr,
+    height * dpr,
   );
 
   return newCanvas.toDataURL("image/png");
