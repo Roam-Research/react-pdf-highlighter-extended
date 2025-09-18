@@ -54,6 +54,18 @@ export interface AreaHighlightProps {
    * Custom styling to be applied to the {@link AreaHighlight} component.
    */
   style?: CSSProperties;
+
+  /**
+   * Whether resizing is enabled for the highlight area.
+   * See [react-rnd docs](https://github.com/bokuweb/react-rnd).
+   */
+  enableResizing?: boolean;
+
+  /**
+   * Whether dragging is disabled for the highlight area.
+   * See [react-rnd docs](https://github.com/bokuweb/react-rnd).
+   */
+  disableDragging?: boolean;
 }
 
 /**
@@ -69,6 +81,8 @@ export const AreaHighlight = ({
   onContextMenu,
   onEditStart,
   style,
+  enableResizing,
+  disableDragging,
 }: AreaHighlightProps) => {
   const highlightClass = isScrolledTo ? "AreaHighlight--scrolledTo" : "";
 
@@ -119,6 +133,8 @@ export const AreaHighlight = ({
         }}
         key={key}
         bounds={bounds}
+        enableResizing={enableResizing}
+        disableDragging={disableDragging}
         style={{
           opacity: isSelectionInProgress ? "0.3" : "1",
           ...style
