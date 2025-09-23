@@ -8,6 +8,7 @@ import React, {
   CSSProperties,
   PointerEventHandler,
   ReactNode,
+  useCallback,
   useLayoutEffect,
   useRef,
   useState,
@@ -227,6 +228,7 @@ export const PdfHighlighter = ({
   );
   const scrolledToHighlightIdRef = useRef<string | null>(null);
   const updateTipPositionRef = useRef(() => {});
+  const pdfHighlighterUtilsRef = useRef<PdfHighlighterUtils | null>(null);
 
   const eventBusRef = useRef<InstanceType<typeof EventBus>>(new EventBus());
   const linkServiceRef = useRef<InstanceType<typeof PDFLinkService>>(
@@ -299,12 +301,6 @@ export const PdfHighlighter = ({
   ]);
 
   // Event listeners
-  const handleScroll = () => {
-    onScrollAway && onScrollAway();
-    scrolledToHighlightIdRef.current = null;
-    renderHighlightLayers();
-  };
-
   const handleMouseUp: PointerEventHandler = () => {
     const container = containerNodeRef.current;
     const rawSelection = getWindow(container).getSelection();
@@ -422,14 +418,14 @@ export const PdfHighlighter = ({
   };
 
   // Render Highlight layers
-  const renderHighlightLayer = (
+  const renderHighlightLayer = useCallback((
     highlightBindings: HighlightBindings,
     pageNumber: number
   ) => {
     if (!viewerRef.current) return;
 
     highlightBindings.reactRoot.render(
-      <PdfHighlighterContext.Provider value={pdfHighlighterUtils}>
+      <PdfHighlighterContext.Provider value={pdfHighlighterUtilsRef.current!}>
         <HighlightLayer
           highlightsByPage={groupHighlightsByPage([
             ...highlights,
@@ -443,9 +439,9 @@ export const PdfHighlighter = ({
         />
       </PdfHighlighterContext.Provider>
     );
-  };
+  }, [highlights, ghostHighlight, children]);
 
-  const renderHighlightLayers = () => {
+  const renderHighlightLayers = useCallback(() => {
     if (!viewerRef.current) return;
 
     for (let pageNumber = 1; pageNumber <= pdfDocument.numPages; pageNumber++) {
@@ -477,19 +473,26 @@ export const PdfHighlighter = ({
         }
       }
     }
-  };
+  }, [pdfDocument.numPages, renderHighlightLayer, highlights, ghostHighlight]);
+
+  // Event listeners
+  const handleScroll = useCallback(() => {
+    onScrollAway && onScrollAway();
+    scrolledToHighlightIdRef.current = null;
+    renderHighlightLayers();
+  }, [onScrollAway, renderHighlightLayers]);
 
   // Utils
-  const isEditingOrHighlighting = () => {
+  const isEditingOrHighlighting = useCallback(() => {
     return (
       Boolean(selection) ||
       Boolean(ghostHighlight) ||
       isSelectionInProgress ||
       isEditInProgress
     );
-  };
+  }, [selection, ghostHighlight, isSelectionInProgress, isEditInProgress]);
 
-  const toggleEditInProgress = (flag?: boolean) => {
+  const toggleEditInProgress = useCallback((flag?: boolean) => {
     const newState = flag ?? !isEditInProgress;
     setIsEditInProgress(newState);
 
@@ -498,16 +501,16 @@ export const PdfHighlighter = ({
       "PdfHighlighter--disable-selection",
       newState
     );
-  };
+  }, [isEditInProgress, setIsEditInProgress]);
 
-  const removeGhostHighlight = () => {
+  const removeGhostHighlight = useCallback(() => {
     if (onRemoveGhostHighlight && ghostHighlight)
       onRemoveGhostHighlight(ghostHighlight);
     setGhostHighlight(null);
     renderHighlightLayers();
-  };
+  }, [onRemoveGhostHighlight, ghostHighlight, setGhostHighlight, renderHighlightLayers]);
 
-  const clearTextSelection = () => {
+  const clearTextSelection = useCallback(() => {
     setSelection(null);
     setIsSelectionInProgress(false);
 
@@ -515,9 +518,9 @@ export const PdfHighlighter = ({
     const selection = getWindow(container).getSelection();
     if (!container || !selection) return;
     selection.removeAllRanges();
-  };
+  }, [setSelection, setIsSelectionInProgress]);
 
-  const scrollToHighlight = (highlight: Highlight) => {
+  const scrollToHighlight = useCallback((highlight: Highlight) => {
     const { boundingRect, usePdfCoordinates } = highlight.position;
     const pageNumber = boundingRect.pageNumber;
 
@@ -551,7 +554,7 @@ export const PdfHighlighter = ({
         once: true,
       });
     }, 100);
-  };
+  }, [handleScroll, renderHighlightLayers]);
 
   const pdfHighlighterUtils: PdfHighlighterUtils = {
     isEditingOrHighlighting,
@@ -562,18 +565,21 @@ export const PdfHighlighter = ({
     isEditInProgress,
     isSelectionInProgress,
     scrollToHighlight,
-    getViewer: () => viewerRef.current,
-    getTip: () => tip,
+    getViewer: useCallback(() => viewerRef.current, []),
+    getTip: useCallback(() => tip, [tip]),
     setTip,
     updateTipPosition: updateTipPositionRef.current,
-    screenshotHighlight: (highlight: Highlight | GhostHighlight) => {
+    screenshotHighlight: useCallback((highlight: Highlight | GhostHighlight) => {
       const viewer = viewerRef.current;
       if (!viewer) return "";
       return screenshotHighlight(viewer, highlight);
-    },
+    }, []),
   };
 
   utilsRef(pdfHighlighterUtils);
+
+  // Store in ref to break circular dependency with renderHighlightLayers
+  pdfHighlighterUtilsRef.current = pdfHighlighterUtils;
 
   return (
     <PdfHighlighterContext.Provider value={pdfHighlighterUtils}>
